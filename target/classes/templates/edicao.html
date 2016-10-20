@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.new.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8"></meta>
+<meta name = "viewport"
+	content="width=device-width, initial-scale=1"/>
+<title>Nova Cerveja</title>
+<link rel="stylesheet"
+	type="text/css"
+	th:href="@{/stylesheets/bootstrap.min.css}"/>
+	<script th:src="@{/javascripts/jquery-3.1.1.min.js}"></script>
+	<script th:src="@{/javascripts/bootstrap.min.js}"></script>
+</head>
+<body>
+	<div th:replace="navbar :: navbar('novo')"></div>
+
+	<div class="container">
+		<form action="editar" method="POST" th:object="${cerveja}">
+			<input type="hidden" id="id" th:field="*{id}"/>
+			<div class="row">
+				<div class="col-sm-4 col-sm-offset-4">
+				
+					<div class="alert alert-danger" th:if="${#fields.hasAnyErrors()}">
+						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+						<th:block th:each="erro: ${#fields.detailedErrors()}">
+							<span class="glyphicon glyphicon-alert"></span>
+							<span th:text="${erro.message}"></span><br />
+						</th:block>
+					</div>
+				</div>
+				
+				
+				<div class="col-sm-4 col-sm-offset-4">
+					<div class="alert alert-success" th:if="${not #strings.isEmpty(mensagem)}">
+						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+						<span class="glyphicon glyphicon-ok">
+						<span th:text = "${mensagem}"></span></span>
+					</div>
+				</div>
+			</div>
+			
+			<div class="form-group" th:classappend="${#fields.hasErrors('nome')} ? has-error">
+						<label class="control-label">Nome</label>
+						<input class="form-control" type="text" name="nome" placeholder="Nome" th:field="*{nome}" /><br />
+			</div>
+			<div class="form-group" th:classappend="${#fields.hasErrors('paisOrigem')} ? has-error">
+				<label>Pais de origem</label>
+				<input class="form-control" type="text" name="paisOrigem" placeholder="Pais de origem" th:field="*{paisOrigem}"/><br />
+			</div>
+			<div class="form-group" th:classappend="${#fields.hasErrors('volume')} ? has-error">
+				<label>Volume</label>
+				<input class="form-control" type="number" name="volume" placeholder="Volume (L)" th:field="*{volume}"/><br />
+			</div>
+			<div class="form-group" th:classappend="${#fields.hasErrors('valor')} ? has-error">
+				<label>Valor</label>
+				<input class="form-control" type="number" name="valor" placeholder="Valor (R$)" th:field="*{valor}"/><br />
+			</div>
+			<div class="row">
+				<div class="col-xs-8">
+					<div class="form-group">
+						<label>URL</label>
+						<input class="form-control" type="text" name="url" placeholder="Url" th:field="*{url}"/><br />
+					</div>
+				</div>
+				<div class="col-xs-4">
+					<div class="form-group" th:classappend="${#fields.hasErrors('tipo')} ? has-error">
+						<label>Tipo</label>
+						<select class="form-control" id="tipo" th:field="*{tipo}">
+							<option value="">Tipo</option>
+							<option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo.descricao}"></option>
+						</select>
+					</div>
+				</div>
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+				
+			</div>
+			<br /><br />
+			<input class="btn btn-default" type="submit" />
+		</form>
+	</div>
+</body>
+</html>

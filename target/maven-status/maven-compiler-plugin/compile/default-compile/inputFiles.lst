@@ -1,0 +1,5 @@
+/home/aluno/workspace/Beer/src/main/java/br/ufes/dcel/beer/BeerApplication.java
+/home/aluno/workspace/Beer/src/main/java/br/ufes/dcel/beer/model/Cerveja.java
+/home/aluno/workspace/Beer/src/main/java/br/ufes/dcel/beer/model/TipoCerveja.java
+/home/aluno/workspace/Beer/src/main/java/br/ufes/dcel/beer/repository/Cervejas.java
+/home/aluno/workspace/Beer/src/main/java/br/ufes/dcel/beer/controller/BeerController.java
