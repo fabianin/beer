@@ -1,8 +1,13 @@
 package br.ufes.dcel.beer.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +27,7 @@ public class BeerController {
 	private Cervejas cervejas;
 	
 	@RequestMapping("/beer")
-	public ModelAndView lista(){
+	public ModelAndView lista(Cerveja cerveja){
 		ModelAndView mv = new ModelAndView("listagem");
 		/*List<Cerveja> cervejas = new ArrayList<Cerveja>();
 		Cerveja c = new Cerveja();
@@ -111,6 +116,17 @@ public class BeerController {
 	public ModelAndView deletarDeVez(@PathVariable("id") Cerveja cerveja, RedirectAttributes attribute){
 		cervejas.delete(cerveja);
 		return new ModelAndView("redirect:/beer");
+	}
+	
+	@RequestMapping("/beer/pesquisa")
+	public ModelAndView pesquisa(Cerveja cerveja){
+		ModelAndView mv = new ModelAndView("listagem");
+		ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.STARTING);
+		Example<Cerveja> example = Example.of(cerveja,matcher);
+		List<Cerveja> todasCervejas = cervejas.findAll(example);
+		mv.addObject("tipos",TipoCerveja.values());
+		mv.addObject("cervejas",todasCervejas);
+		return mv;
 	}
 	
 	
