@@ -12,7 +12,7 @@
 	<script th:src="@{/javascripts/jquery.js}"></script>
 	<script th:src="@{/javascripts/bootstrap.min.js}"></script>
 </head>
-<body>
+<body id="bodi">
 
 <div th:replace="navbar :: navbar('listagem')"></div>
 
@@ -22,10 +22,24 @@
 
 	<span class="row"></span>
 	<span class="row"></span>
-	<form class="form form-inline col-md-6 col-md-offset-3" th:action="@{/beer/pesquisa}" th:object="${cerveja}">
-		<input type="text" name="nome" th:field="*{nome}" class="form-control" placeholder="Nome"/>
-		<input type="number" name="volume" th:field="*{volume}" class="form-control" placeholder="Volume"/>
-		<input type="submit" class="form-control" value="Pesquisar" id="btn-pesquisa"/>
+	<form class="form" th:action="@{/beer/pesquisa}" th:object="${cerveja}">
+		<div class="row">
+			<div class="col-md-3">
+			<input type="text" name="nome" th:field="*{nome}" class="form-control" placeholder="Nome"/>
+			</div>
+			<div class="col-md-3">
+			<input type="number" name="volume" th:field="*{volume}" class="form-control" placeholder="Volume"/>
+			</div>
+			<div class="col-md-3">
+			<select class="form-control" id="tipo" th:field="*{tipo}">
+				<option value="">Tipo</option>
+				<option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo.descricao}"></option>
+			</select>
+			</div>
+			<div class="col-md-3">
+			<input type="submit" class="form-control btn btn-info" value="Pesquisar" id="btn-pesquisa"/>
+			</div>
+		</div>
 	</form>
 	<div class="col-sm-4 col-sm-offset-4">
 		<div class="alert alert-danger" th:if="${not #strings.isEmpty(mensagemE)}">
@@ -41,7 +55,7 @@
 	</div>
 	<span class="row"></span>
 	
-	<div class="table-responsive">
+	<div class="table-responsive" id="tt">
 		<table id="tabela" class="table  table-striped table-bordered table-hover table-condensed">
 			<thead>
 				<tr>
@@ -55,7 +69,6 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr><td>oi</td></tr>
 				
 				
 			</tbody>
@@ -64,33 +77,51 @@
 </div>
 </body>
 <script>
-	 $(document).ready(function(){
+
+	
+	var updateTable = function(data){
 		$('#tabela tbody > tr').remove();
+		if(data.length==0){
+			$('table >tbody').remove();
+			$('#tabela').append('<tr><td colspan="7">Nenhuma cerveja encontrada</td></tr>');
+		}
+		$.each(data, function(i, item){
+				$('#tabela tbody').append('<tr><td>' +item.id+'</td>'+
+						'<td><a href="/beer/'+item.id+'">'+item.nome+'</a></td>'+
+						'<td>'+item.paisOrigem+'</td>'+
+						'<td>'+item.volume+'</td>'+
+						'<td>'+item.valor+'</td>'+
+						'<td>'+item.tipo+'</td>'+
+						'<td><a class="text-danger" href="/beer/remover/'+item.id+'"><span class="red glyphicon glyphicon-remove"></span></a></td>'+
+						'</tr>'
+						);
+				console.log(item.nome);
+			});
+		
+	};
+	
+	var ajaxOptions = {
+			type: "GET",
+			url: "/beer/pesquisa",
+			success: updateTable,
+			
+		};
+	
+	 $(document).ready(function(){
+		$.ajax(ajaxOptions);
 	 	$("#btn-pesquisa").click(function(e){
 		 	e.preventDefault();
-	 		$.ajax({
-		 		type : "GET",
-		 		url : "/beer/pesquisa",
-		 		data : {
-		 			"nome" : $('#nome').val(),
-		 		},
-		 		success: function(data){
-		 			console.log(data);
-		 			$('#tabela tbody > tr').remove();
-		 			$.each(data, function(i, item){
-		 				$('#tabela tbody').append('<tr><td>' +item.id+'</td>'+
-		 						'<td><a href="/beer/'+item.id+'">'+item.nome+'</a></td>'+
-		 						'<td>'+item.paisOrigem+'</td>'+
-		 						'<td>'+item.volume+'</td>'+
-		 						'<td>'+item.valor+'</td>'+
-		 						'<td>'+item.tipo+'</td>'+
-		 						'<td><a class="text-danger" href="/beer/remover/'+item.id+'"><span class="red glyphicon glyphicon-remove"></span></a></td>'+
-		 						'</tr>'
-		 						);
-		 				console.log(item.nome);
-		 			});
-		 		}
-		 	});
+	 		var ajaxOptions2 = {
+			 		type : "GET",
+			 		url : "/beer/pesquisa",
+			 		data : {
+			 			"nome" : $('#nome').val(),
+			 			"tipo": $('#tipo').val(),
+			 			"volume": $('#volume').val(),
+			 		},
+			 		success: updateTable
+		 	}
+	 		$.ajax(ajaxOptions2);
 	 	});
 	 	
 	 	

@@ -50,6 +50,7 @@ public class BeerController {
 		cervejas.add(c2);*/
 		
 		mv.addObject("cervejas",cervejas.findAll());
+		mv.addObject("tipos",TipoCerveja.values());
 		
 		return mv;
 	}
