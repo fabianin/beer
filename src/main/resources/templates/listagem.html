@@ -13,7 +13,6 @@
 	<script th:src="@{/javascripts/bootstrap.min.js}"></script>
 </head>
 <body id="bodi">
-
 <div th:replace="navbar :: navbar('listagem')"></div>
 
 
@@ -22,6 +21,24 @@
 
 	<span class="row"></span>
 	<span class="row"></span>
+	
+	<div class="modal fade" id="confirm-delete" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Confirma remoção?</h4>
+				</div>
+				<div class="modal-body">
+					<p>Tem certeza?</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					<a id="confirmRemoval" class="btn btn-danger btn-ok" data-dismiss="modal" href="#">Remover</a>
+				</div>
+			</div>
+		</div> 
+	</div>
+	
 	<form class="form" th:action="@{/beer/pesquisa}" th:object="${cerveja}">
 		<div class="row">
 			<div class="col-md-3">
@@ -92,7 +109,7 @@
 						'<td>'+item.volume+'</td>'+
 						'<td>'+item.valor+'</td>'+
 						'<td>'+item.tipo+'</td>'+
-						'<td><a class="text-danger" href="/beer/remover/'+item.id+'"><span class="red glyphicon glyphicon-remove"></span></a></td>'+
+						'<td><a id="remover" data-id="'+item.id+'" class="text-danger" href="/beer/remover/'+item.id+'"><span class="red glyphicon glyphicon-remove"></span></a></td>'+
 						'</tr>'
 						);
 				console.log(item.nome);
@@ -107,8 +124,40 @@
 			
 		};
 	
+	var showModal = function(e){
+		e.preventDefault();
+		var id=$(this).data('id');
+		var botaoConfirma = $("confirmRemoval");
+		botaoConfirma.attr("data-id",id);
+		$('#confirm-delete').modal('show');
+	};
+	var remover = function(e){
+		var token = $("input[name='_csrf']").val();
+		var header = $("input[name='_csrf_header']").val();
+		var headers = {};
+		headers[header] = token;
+		
+		var ajaxOptionsDelete = {
+				type: "DELETE",
+				url: "/beer/delete/"+$(this).data('id'),
+				headers: headers,
+				success: function(){
+					console.log("ola");
+					$("#btn-pesquisa").click();
+					},
+				error: function(xhr,status,error){
+					console.log(xhr.responseText);
+				}
+				
+			};
+		$.ajax(ajaxOptionsDelete);
+	}
 	 $(document).ready(function(){
+		 
+		$('#tabela').on('click','#remover',showModal);
+		 
 		$.ajax(ajaxOptions);
+		$("#confirmRemoval").click(remover);
 	 	$("#btn-pesquisa").click(function(e){
 		 	e.preventDefault();
 	 		var ajaxOptions2 = {

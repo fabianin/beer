@@ -16,6 +16,8 @@
 <body>
 
 <nav class="nav navbar-inverse" th:fragment="navbar(activeTab)">
+	<input type="hidden" name="_csrf_header" th:value="${_csrf.headerName}" />
+	<input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
 	<div class="container-fluid">
 		<div class="navbar-header">
 			<a class="navbar-brand" href="/beer">Beer Site</a>

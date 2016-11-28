@@ -55,6 +55,37 @@ public class BeerController {
 		return mv;
 	}
 	
+
+	@RequestMapping("/beer/angular")
+	public ModelAndView listar(Cerveja cerveja){
+		ModelAndView mv = new ModelAndView("listagem2");
+		/*List<Cerveja> cervejas = new ArrayList<Cerveja>();
+		Cerveja c = new Cerveja();
+		c.setId(1L);
+		c.setNome("Lager");
+		c.setPaisOrigem("Bangladesh");
+		c.setValor(new BigDecimal(100));
+		c.setVolume(10);
+		c.setTipo(TipoCerveja.LAGER);
+		
+		Cerveja c2 = new Cerveja();
+		c2.setId(2L);
+		c2.setNome("Ale");
+		c2.setPaisOrigem("Bangladesh");
+		c2.setValor(new BigDecimal(200));
+		c2.setVolume(5);
+		c2.setTipo(TipoCerveja.ALE);
+		
+		cervejas.add(c);
+		cervejas.add(c2);*/
+		
+		mv.addObject("cervejas",cervejas.findAll());
+		mv.addObject("tipos",TipoCerveja.values());
+		
+		return mv;
+	}
+	
+	
 	@RequestMapping("/beer/novo")
 	public ModelAndView novo(Cerveja cerveja){
 		ModelAndView mv = new ModelAndView("cadastro");
