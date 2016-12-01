@@ -28,8 +28,9 @@ public class AjaxController {
 		return todasCervejas;
 	}
 	
-	@DeleteMapping("/beer/delete/{id}")
-	public void remover(@PathVariable("id") Long id){
+	@DeleteMapping("/beer/deletar")
+	public void remover(Cerveja cerveja){
+		cervejas.delete(cerveja);
 		
 	}
 

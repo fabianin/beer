@@ -31,35 +31,38 @@
 					<h4 class="modal-title">Confirma remoção?</h4>
 				</div>
 				<div class="modal-body">
-					<p>Tem certeza?</p>
+					<p>Tem certeza que deseja remover {{beerRemover.nome}}?</p>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-					<a id="confirmRemoval" class="btn btn-danger btn-ok" data-dismiss="modal" href="#">Remover</a>
+					<a id="confirmRemoval" ng-click="remover()" class="btn btn-danger btn-ok" data-dismiss="modal" href="#">Remover</a>
 				</div>
 			</div>
 		</div> 
 	</div>
 	
-	<form class="form" th:action="@{/beer/pesquisa}" th:object="${cerveja}">
+	<form class="form">
 		<div class="row">
 			<div class="col-md-3">
-			<input type="text" name="nome" th:field="*{nome}" class="form-control" placeholder="Nome"/>
+			<input type="text" name="nome" ng-model="beerPesquisa.nome" class="form-control" placeholder="Nome"/>
 			</div>
 			<div class="col-md-3">
-			<input type="number" name="volume" th:field="*{volume}" class="form-control" placeholder="Volume"/>
+			<input type="number" name="volume" ng-model="beerPesquisa.volume" class="form-control" placeholder="Volume"/>
 			</div>
 			<div class="col-md-3">
-			<select class="form-control" id="tipo" th:field="*{tipo}">
+			<select class="form-control" id="tipo" ng-model="beerPesquisa.tipo">
 				<option value="">Tipo</option>
 				<option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo.descricao}"></option>
 			</select>
 			</div>
 			<div class="col-md-3">
-			<input type="submit" class="form-control btn btn-info" value="Pesquisar" id="btn-pesquisa"/>
+			<input type="submit" ng-click="pesquisar()" class="form-control btn btn-info" value="Pesquisar" id="btn-pesquisa"/>
 			</div>
 		</div>
 	</form>
+	
+	{{beerPesquisa.nome}}
+	
 	<div class="col-sm-4 col-sm-offset-4">
 		<div class="alert alert-danger" th:if="${not #strings.isEmpty(mensagemE)}">
 			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -113,7 +116,7 @@
 					<td>{{beer.volume}}</td>
 					<td>{{beer.valor}}</td>
 					<td>{{beer.tipo}}</td>
-					<td><a id="remover" data-id="{{beer.id}}" class="text-danger" href="/beer/remover/{{beer.id}}"><span class="red glyphicon glyphicon-remove"></span></a></td>
+					<td><button data-toggle="modal" data-target="#confirm-delete" type="button" ng-click="configModal(beer)">Remover</button> </td>
 				</tr>
 				<tr ng-if="!beerLista.length">
 					<td colspan="7">Nenhuma cerveja cadastrada</td>
@@ -127,89 +130,4 @@
 </div>
 
 </body>
-<script>
-
-	
-	var updateTable = function(data){
-		$('#tabela tbody > tr').remove();
-		if(data.length==0){
-			$('table >tbody').remove();
-			$('#tabela').append('<tr><td colspan="7">Nenhuma cerveja encontrada</td></tr>');
-		}
-		$.each(data, function(i, item){
-				$('#tabela tbody').append('<tr><td>' +item.id+'</td>'+
-						'<td><a href="/beer/'+item.id+'">'+item.nome+'</a></td>'+
-						'<td>'+item.paisOrigem+'</td>'+
-						'<td>'+item.volume+'</td>'+
-						'<td>'+item.valor+'</td>'+
-						'<td>'+item.tipo+'</td>'+
-						'<td><a id="remover" data-id="'+item.id+'" class="text-danger" href="/beer/remover/'+item.id+'"><span class="red glyphicon glyphicon-remove"></span></a></td>'+
-						'</tr>'
-						);
-				console.log(item.nome);
-			});
-		
-	};
-	
-	var ajaxOptions = {
-			type: "GET",
-			url: "/beer/pesquisa",
-			success: updateTable,
-			
-		};
-	
-	var showModal = function(e){
-		e.preventDefault();
-		var id=$(this).data('id');
-		var botaoConfirma = $("confirmRemoval");
-		botaoConfirma.attr("data-id",id);
-		$('#confirm-delete').modal('show');
-	};
-	var remover = function(e){
-		var token = $("input[name='_csrf']").val();
-		var header = $("input[name='_csrf_header']").val();
-		var headers = {};
-		headers[header] = token;
-		
-		var ajaxOptionsDelete = {
-				type: "DELETE",
-				url: "/beer/delete/"+$(this).data('id'),
-				headers: headers,
-				success: function(){
-					console.log("ola");
-					$("#btn-pesquisa").click();
-					},
-				error: function(xhr,status,error){
-					console.log(xhr.responseText);
-				}
-				
-			};
-		$.ajax(ajaxOptionsDelete);
-	}
-	 $(document).ready(function(){
-		 
-		 
-		 
-		$('#tabela').on('click','#remover',showModal);
-		 
-		$.ajax(ajaxOptions);
-		$("#confirmRemoval").click(remover);
-	 	$("#btn-pesquisa").click(function(e){
-		 	e.preventDefault();
-	 		var ajaxOptions2 = {
-			 		type : "GET",
-			 		url : "/beer/pesquisa",
-			 		data : {
-			 			"nome" : $('#nome').val(),
-			 			"tipo": $('#tipo').val(),
-			 			"volume": $('#volume').val(),
-			 		},
-			 		success: updateTable
-		 	}
-	 		$.ajax(ajaxOptions2);
-	 	});
-	 	
-	 	
-	 });
-</script>
 </html>
