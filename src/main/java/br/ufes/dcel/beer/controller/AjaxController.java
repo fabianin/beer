@@ -8,7 +8,6 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.ufes.dcel.beer.model.Cerveja;
@@ -31,7 +30,6 @@ public class AjaxController {
 	@DeleteMapping("/beer/deletar")
 	public void remover(Cerveja cerveja){
 		cervejas.delete(cerveja);
-		
 	}
 
 }
